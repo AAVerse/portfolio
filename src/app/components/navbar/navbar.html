@@ -1,0 +1,29 @@
+<nav class="side-navbar" [class.side-navbar--collapsed]="collapsed" aria-label="Primary">
+  <div class="side-navbar__header">
+    <a class="side-navbar__brand" href="#" [attr.aria-label]="collapsed ? 'AAVerse' : null">
+      <span class="side-navbar__brand-mark">AAV</span>
+      <span class="side-navbar__brand-rest">erse</span>
+    </a>
+
+    <button
+      class="side-navbar__toggle"
+      type="button"
+      (click)="toggleNavbar()"
+      [attr.aria-label]="collapsed ? 'Expand navigation' : 'Collapse navigation'"
+      [attr.aria-expanded]="!collapsed"
+    >
+      <span class="side-navbar__toggle-icon" aria-hidden="true"></span>
+    </button>
+  </div>
+
+  <ul class="side-navbar__links">
+    @for (item of navItems; track item.href) {
+      <li>
+        <a class="side-navbar__link" [href]="item.href" [attr.aria-label]="item.label">
+          <span class="side-navbar__link-short" aria-hidden="true">{{ item.shortLabel }}</span>
+          <span class="side-navbar__link-label">{{ item.label }}</span>
+        </a>
+      </li>
+    }
+  </ul>
+</nav>

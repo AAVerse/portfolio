@@ -1,1 +1,10 @@
-<h1>{{ title() }}</h1>
+<div class="app-shell" [class.app-shell--navbar-collapsed]="isNavbarCollapsed()">
+  <app-navbar
+    [collapsed]="isNavbarCollapsed()"
+    (collapsedChange)="setNavbarCollapsed($event)"
+  />
+
+  <main class="app-shell__content" aria-label="Page content">
+    <router-outlet />
+  </main>
+</div>

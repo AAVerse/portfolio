@@ -5,8 +5,8 @@
   --color-background: #f1e2d1;
   --color-surface: #dcc3aa;
   --color-text: #541a1a;
-  --navbar-expanded-width: clamp(20rem, 30vw, 30rem);
-  --navbar-collapsed-width: clamp(4rem, 5vw, 5rem);
+  --navbar-expanded-width: 380px;
+  --navbar-collapsed-width: 64px;
 }
 
 * {
