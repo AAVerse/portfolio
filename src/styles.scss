@@ -22,3 +22,25 @@ body {
   background-color: var(--color-background);
   color: var(--color-text);
 }
+
+.portfolio-section {
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
+  padding: clamp(2rem, 6vw, 6rem);
+}
+
+.portfolio-section h1 {
+  max-width: min(100%, 12ch);
+  color: var(--color-text);
+  font-size: clamp(3rem, 15cqi, 10rem);
+  font-weight: 900;
+  line-height: 0.95;
+  overflow-wrap: anywhere;
+  text-align: center;
+}
+
+.portfolio-section--about,
+.portfolio-section--projects-technologies {
+  background: var(--color-surface);
+}

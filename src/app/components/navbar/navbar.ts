@@ -11,9 +11,10 @@ export class Navbar {
   @Output() collapsedChange = new EventEmitter<boolean>();
 
   protected readonly navItems = [
+    { label: 'Intro', href: '#intro', shortLabel: 'I' },
     { label: 'About', href: '#about', shortLabel: 'A' },
     { label: 'Skills', href: '#skills', shortLabel: 'S' },
-    { label: 'Projects & Achievements', href: '#projects-achievements', shortLabel: 'P' },
+    { label: 'Projects & Technologies', href: '#projects-technologies', shortLabel: 'P' },
     { label: 'Contact', href: '#contact', shortLabel: 'C' },
   ];
 

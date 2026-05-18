@@ -22,6 +22,6 @@ describe('App', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('app-navbar')).toBeTruthy();
     expect(compiled.textContent).toContain('AAVerse');
-    expect(compiled.textContent).toContain('Projects & Achievements');
+    expect(compiled.textContent).toContain('Projects & Technologies');
   });
 });

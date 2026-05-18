@@ -10,12 +10,14 @@
 }
 
 .app-shell__content {
+  container-type: inline-size;
   min-height: 100vh;
   margin-left: var(--navbar-expanded-width);
-  padding: clamp(1.5rem, 4vw, 4rem);
   transition: margin-left 280ms ease;
+  width: calc(100vw - var(--navbar-expanded-width));
 }
 
 .app-shell--navbar-collapsed .app-shell__content {
   margin-left: var(--navbar-collapsed-width);
+  width: calc(100vw - var(--navbar-collapsed-width));
 }
