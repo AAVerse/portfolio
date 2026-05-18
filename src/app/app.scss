@@ -1,0 +1,21 @@
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+.app-shell {
+  min-height: 100vh;
+  background: var(--color-background);
+  color: var(--color-text);
+}
+
+.app-shell__content {
+  min-height: 100vh;
+  margin-left: var(--navbar-expanded-width);
+  padding: clamp(1.5rem, 4vw, 4rem);
+  transition: margin-left 280ms ease;
+}
+
+.app-shell--navbar-collapsed .app-shell__content {
+  margin-left: var(--navbar-collapsed-width);
+}
