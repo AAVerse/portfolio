@@ -10,9 +10,9 @@
 
 .pc-outline-scene {
   position: absolute;
-  inset: 0 0 0 auto;
-  width: min(56rem, 58vw);
-  min-width: 28rem;
+  inset: 0;
+  width: 100%;
+  min-width: 0;
 }
 
 .pc-outline-scene__canvas {
@@ -23,14 +23,7 @@
 
 @media (max-width: 900px) {
   :host {
-    inset-block-start: auto;
-    height: min(46vh, 24rem);
-  }
-
-  .pc-outline-scene {
-    inset: 0;
-    width: 100%;
-    min-width: 0;
+    display: none;
   }
 }
 

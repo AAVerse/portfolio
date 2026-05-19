@@ -42,6 +42,8 @@ body {
 }
 
 .portfolio-section h1 {
+  position: relative;
+  z-index: 2;
   max-width: min(100%, 12ch);
   color: var(--color-text);
   font-size: clamp(3rem, 13cqi, 9rem);
@@ -51,6 +53,27 @@ body {
   text-align: left;
 }
 
+.portfolio-section--about {
+  justify-items: center;
+  padding-right: clamp(2rem, 6vw, 6rem);
+  padding-left: clamp(2rem, 6vw, 6rem);
+}
+
+.portfolio-section--about h1 {
+  max-width: 100%;
+  text-align: center;
+}
+
+.portfolio-section--skills {
+  justify-items: end;
+  padding-right: clamp(2rem, 6vw, 6rem);
+  padding-left: clamp(18rem, 42vw, 38rem);
+}
+
+.portfolio-section--skills h1 {
+  text-align: right;
+}
+
 .portfolio-section--about,
 .portfolio-section--projects-technologies {
   background: var(--color-surface);
@@ -58,10 +81,9 @@ body {
 
 @media (max-width: 900px) {
   .portfolio-section {
-    align-items: start;
+    align-items: center;
     justify-items: center;
     padding: clamp(2rem, 8vw, 4rem);
-    padding-bottom: clamp(18rem, 48vh, 28rem);
   }
 
   .portfolio-section h1 {

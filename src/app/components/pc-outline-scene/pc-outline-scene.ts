@@ -63,7 +63,10 @@ export class PcOutlineScene implements AfterViewInit, OnChanges, OnDestroy {
   private scene?: Scene;
   private targetRotationY = -0.18;
   private targetLidRotationX = CLOSED_LID_ROTATION;
+  private targetPosition: VectorTuple = [2.35, -0.05, 0];
+  private targetScale = 0.9;
   private three?: ThreeModule;
+  private compactLayout = false;
   private reducedMotion = false;
 
   ngAfterViewInit(): void {
@@ -348,10 +351,26 @@ export class PcOutlineScene implements AfterViewInit, OnChanges, OnDestroy {
 
   private updateTargetRotation(): void {
     const progress = Math.max(0, this.scrollProgress);
-    const openProgress = this.smoothstep(Math.min(progress, 1));
+    const aboutProgress = this.smoothstep(Math.min(progress, 1));
+    const skillsProgress = this.smoothstep(Math.min(Math.max(progress - 1, 0), 1));
     const rotationProgress = Math.max(progress - 1, 0);
+    const closeProgress = progress <= 1 ? aboutProgress : 1 - skillsProgress;
+    const sectionScale = this.compactLayout ? 0.58 : 0.62;
+    const introPosition = this.compactLayout ? [0, -0.08, 0] : [2.18, -0.1, 0];
+    const aboutPosition = this.compactLayout ? [0, -0.85, 0] : [0, -1.42, 0];
+    const skillsPosition = this.compactLayout ? [-0.72, -0.48, 0] : [-2.18, -0.1, 0];
+    const laterPosition = this.compactLayout ? [0, -0.08, 0] : [2.18, -0.1, 0];
+    const laterProgress = this.smoothstep(Math.min(Math.max(progress - 2, 0), 1));
 
-    this.targetLidRotationX = this.lerp(CLOSED_LID_ROTATION, OPEN_LID_ROTATION, openProgress);
+    if (progress <= 1) {
+      this.targetPosition = this.interpolateVector(introPosition, aboutPosition, aboutProgress);
+    } else if (progress <= 2) {
+      this.targetPosition = this.interpolateVector(aboutPosition, skillsPosition, skillsProgress);
+    } else {
+      this.targetPosition = this.interpolateVector(skillsPosition, laterPosition, laterProgress);
+    }
+    this.targetScale = sectionScale;
+    this.targetLidRotationX = this.lerp(OPEN_LID_ROTATION, CLOSED_LID_ROTATION, closeProgress);
     this.targetRotationY = -0.18 + rotationProgress * (Math.PI / 2);
 
     if (this.reducedMotion) {
@@ -376,6 +395,13 @@ export class PcOutlineScene implements AfterViewInit, OnChanges, OnDestroy {
       this.targetRotationY,
       amount,
     );
+    this.pcGroup.position.set(
+      this.threeModule.MathUtils.lerp(this.pcGroup.position.x, this.targetPosition[0], amount),
+      this.threeModule.MathUtils.lerp(this.pcGroup.position.y, this.targetPosition[1], amount),
+      this.threeModule.MathUtils.lerp(this.pcGroup.position.z, this.targetPosition[2], amount),
+    );
+    const nextScale = this.threeModule.MathUtils.lerp(this.pcGroup.scale.x, this.targetScale, amount);
+    this.pcGroup.scale.setScalar(nextScale);
 
     if (this.lidGroup) {
       this.lidGroup.rotation.x = this.threeModule.MathUtils.lerp(
@@ -408,9 +434,9 @@ export class PcOutlineScene implements AfterViewInit, OnChanges, OnDestroy {
     }
 
     const compact = width < 520;
+    this.compactLayout = compact;
     this.camera.position.z = compact ? 11.7 : 9.6;
-    this.pcGroup.position.set(compact ? -0.1 : -0.15, compact ? -0.08 : -0.05, 0);
-    this.pcGroup.scale.setScalar(compact ? 0.75 : 0.9);
+    this.updateTargetRotation();
   }
 
   private renderScene(): void {
@@ -454,6 +480,14 @@ export class PcOutlineScene implements AfterViewInit, OnChanges, OnDestroy {
 
   private lerp(start: number, end: number, amount: number): number {
     return start + (end - start) * amount;
+  }
+
+  private interpolateVector(start: number[], end: number[], amount: number): VectorTuple {
+    return [
+      this.lerp(start[0], end[0], amount),
+      this.lerp(start[1], end[1], amount),
+      this.lerp(start[2], end[2], amount),
+    ];
   }
 
   private smoothstep(value: number): number {
