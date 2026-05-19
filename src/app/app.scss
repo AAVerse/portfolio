@@ -4,13 +4,20 @@
 }
 
 .app-shell {
+  --active-navbar-width: var(--navbar-expanded-width);
+
   color-scheme: light;
+  position: relative;
   min-height: 100vh;
   background: var(--color-background);
   color: var(--color-text);
   transition:
     background-color 220ms ease,
     color 220ms ease;
+}
+
+.app-shell--navbar-collapsed {
+  --active-navbar-width: var(--navbar-collapsed-width);
 }
 
 .app-shell--dark-theme {
@@ -34,12 +41,7 @@
   scroll-snap-type: y mandatory;
   scroll-behavior: smooth;
   overscroll-behavior-y: contain;
-  margin-left: var(--navbar-expanded-width);
+  margin-left: var(--active-navbar-width);
   transition: margin-left 280ms ease;
-  width: calc(100vw - var(--navbar-expanded-width));
-}
-
-.app-shell--navbar-collapsed .app-shell__content {
-  margin-left: var(--navbar-collapsed-width);
-  width: calc(100vw - var(--navbar-collapsed-width));
+  width: calc(100vw - var(--active-navbar-width));
 }

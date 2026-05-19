@@ -10,7 +10,13 @@
     (darkThemeChange)="setDarkTheme($event)"
   />
 
-  <main class="app-shell__content" aria-label="Page content">
+  <app-pc-outline-scene [darkTheme]="isDarkTheme()" [scrollProgress]="sectionProgress()" />
+
+  <main
+    class="app-shell__content"
+    aria-label="Page content"
+    (scroll)="updateSectionProgress($event)"
+  >
     <app-intro-section />
     <app-about-section />
     <app-skills-section />

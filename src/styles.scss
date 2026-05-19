@@ -31,9 +31,12 @@ body {
 
 .portfolio-section {
   display: grid;
+  position: relative;
   min-height: 100vh;
-  place-items: center;
+  align-items: center;
+  justify-items: start;
   padding: clamp(2rem, 6vw, 6rem);
+  padding-right: clamp(18rem, 42vw, 38rem);
   scroll-snap-align: start;
   scroll-snap-stop: always;
 }
@@ -41,14 +44,27 @@ body {
 .portfolio-section h1 {
   max-width: min(100%, 12ch);
   color: var(--color-text);
-  font-size: clamp(3rem, 15cqi, 10rem);
+  font-size: clamp(3rem, 13cqi, 9rem);
   font-weight: 900;
   line-height: 0.95;
-  overflow-wrap: anywhere;
-  text-align: center;
+  overflow-wrap: break-word;
+  text-align: left;
 }
 
 .portfolio-section--about,
 .portfolio-section--projects-technologies {
   background: var(--color-surface);
+}
+
+@media (max-width: 900px) {
+  .portfolio-section {
+    align-items: start;
+    justify-items: center;
+    padding: clamp(2rem, 8vw, 4rem);
+    padding-bottom: clamp(18rem, 48vh, 28rem);
+  }
+
+  .portfolio-section h1 {
+    text-align: center;
+  }
 }

@@ -1,0 +1,41 @@
+:host {
+  position: fixed;
+  inset: 0 0 0 var(--active-navbar-width);
+  z-index: 1;
+  display: block;
+  overflow: hidden;
+  pointer-events: none;
+  transition: left 280ms ease;
+}
+
+.pc-outline-scene {
+  position: absolute;
+  inset: 0 0 0 auto;
+  width: min(56rem, 58vw);
+  min-width: 28rem;
+}
+
+.pc-outline-scene__canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+@media (max-width: 900px) {
+  :host {
+    inset-block-start: auto;
+    height: min(46vh, 24rem);
+  }
+
+  .pc-outline-scene {
+    inset: 0;
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host {
+    transition: none;
+  }
+}
