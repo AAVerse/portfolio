@@ -15,9 +15,7 @@ import {
 import type {
   BufferGeometry,
   Group,
-  Line,
   LineBasicMaterial,
-  LineSegments,
   PerspectiveCamera,
   Scene,
   Vector3,
@@ -27,6 +25,9 @@ import type {
 type MaterialName = 'primary' | 'surface' | 'text';
 type ThreeModule = typeof import('three');
 type VectorTuple = [number, number, number];
+
+const CLOSED_LID_ROTATION = Math.PI / 2;
+const OPEN_LID_ROTATION = -0.16;
 
 @Component({
   selector: 'app-pc-outline-scene',
@@ -42,17 +43,26 @@ export class PcOutlineScene implements AfterViewInit, OnChanges, OnDestroy {
   private readonly hostRef = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly ngZone = inject(NgZone);
   private readonly platformId = inject(PLATFORM_ID);
+  private readonly boldOffsets: VectorTuple[] = [
+    [0, 0, 0],
+    [0.018, 0, 0],
+    [-0.018, 0, 0],
+    [0, 0.018, 0],
+    [0, -0.018, 0],
+  ];
   private readonly materials = new Map<MaterialName, LineBasicMaterial>();
   private readonly geometries: BufferGeometry[] = [];
 
   private animationFrameId = 0;
   private camera?: PerspectiveCamera;
   private isDestroyed = false;
+  private lidGroup?: Group;
   private pcGroup?: Group;
   private renderer?: WebGLRenderer;
   private resizeObserver?: ResizeObserver;
   private scene?: Scene;
   private targetRotationY = -0.18;
+  private targetLidRotationX = CLOSED_LID_ROTATION;
   private three?: ThreeModule;
   private reducedMotion = false;
 
@@ -144,48 +154,60 @@ export class PcOutlineScene implements AfterViewInit, OnChanges, OnDestroy {
 
     this.materials.set(
       'primary',
-      new THREE.LineBasicMaterial({ color: colors.primary, transparent: true, opacity: 0.98 }),
+      new THREE.LineBasicMaterial({
+        color: colors.primary,
+        linewidth: 2,
+        transparent: true,
+        opacity: 0.98,
+      }),
     );
     this.materials.set(
       'surface',
-      new THREE.LineBasicMaterial({ color: colors.surface, transparent: true, opacity: 0.82 }),
+      new THREE.LineBasicMaterial({
+        color: colors.surface,
+        linewidth: 2,
+        transparent: true,
+        opacity: 0.9,
+      }),
     );
     this.materials.set(
       'text',
-      new THREE.LineBasicMaterial({ color: colors.text, transparent: true, opacity: 0.9 }),
+      new THREE.LineBasicMaterial({
+        color: colors.text,
+        linewidth: 2,
+        transparent: true,
+        opacity: 0.95,
+      }),
     );
   }
 
   private createPcOutline(): Group {
     const THREE = this.threeModule;
     const group = new THREE.Group();
-    group.position.set(-0.15, 0.1, 0);
-    group.rotation.x = -0.08;
-    group.scale.setScalar(0.86);
+    group.position.set(-0.15, -0.05, 0);
+    group.rotation.x = -0.12;
+    group.scale.setScalar(0.9);
 
-    group.add(this.createBoxOutline(4.65, 2.8, 0.2, 'primary', [0, 0.58, 0]));
-    group.add(this.createRectangle(4.05, 2.18, 'text', [0, 0.58, 0.13]));
-    group.add(this.createLine([[-1.7, 1.15, 0.15], [1.7, 1.15, 0.15]], 'surface'));
-    group.add(this.createLine([[-1.7, 0.82, 0.15], [1.7, 0.82, 0.15]], 'surface'));
-    group.add(this.createLine([[-1.7, 0.49, 0.15], [1.7, 0.49, 0.15]], 'surface'));
+    group.add(this.createBoxOutline(5.55, 0.24, 3.12, 'primary', [0, -1.28, 0.42]));
+    group.add(this.createHorizontalRectangle(5.1, 2.62, 'text', [0, -1.12, 0.44]));
+    group.add(this.createHorizontalRectangle(1.45, 0.82, 'surface', [0, -1.08, 1.08]));
+    group.add(this.createLine([[-2.05, -1.08, -0.38], [2.05, -1.08, -0.38]], 'surface'));
+    group.add(this.createLine([[-2.05, -1.08, -0.1], [2.05, -1.08, -0.1]], 'surface'));
+    group.add(this.createLine([[-2.05, -1.08, 0.18], [2.05, -1.08, 0.18]], 'surface'));
+    group.add(this.createLine([[-2.35, -1.08, -1.13], [2.35, -1.08, -1.13]], 'primary'));
 
-    group.add(this.createBoxOutline(0.36, 0.7, 0.22, 'primary', [0, -1.28, 0.02]));
-    group.add(this.createBoxOutline(1.55, 0.22, 0.92, 'primary', [0, -1.76, 0.42]));
-    group.add(this.createBoxOutline(3.85, 0.24, 1.02, 'text', [0, -2.12, 0.82]));
-    group.add(this.createLine([[-1.55, -1.99, 0.62], [1.55, -1.99, 0.62]], 'surface'));
-    group.add(this.createLine([[-1.72, -1.99, 0.85], [1.72, -1.99, 0.85]], 'surface'));
-    group.add(this.createLine([[-1.45, -1.99, 1.08], [1.45, -1.99, 1.08]], 'surface'));
-
-    group.add(this.createBoxOutline(1.25, 2.9, 0.7, 'primary', [3.15, 0.36, -0.18]));
-    group.add(this.createRectangle(0.82, 2.32, 'surface', [3.15, 0.36, 0.2]));
-    group.add(this.createEllipse(0.12, 0.12, 'text', [2.94, 1.32, 0.22]));
-    group.add(this.createLine([[2.82, 0.82, 0.23], [3.48, 0.82, 0.23]], 'surface'));
-    group.add(this.createLine([[2.82, 0.54, 0.23], [3.48, 0.54, 0.23]], 'surface'));
-    group.add(this.createLine([[2.82, 0.26, 0.23], [3.48, 0.26, 0.23]], 'surface'));
-    group.add(this.createLine([[2.82, -0.02, 0.23], [3.48, -0.02, 0.23]], 'surface'));
-
-    group.add(this.createFlatEllipse(0.46, 0.24, 'text', [2.78, -2.12, 0.93]));
-    group.add(this.createLine([[2.78, -2.12, 0.72], [2.78, -2.12, 1.12]], 'surface'));
+    this.lidGroup = new THREE.Group();
+    this.lidGroup.position.set(0, -1.14, -1.13);
+    this.lidGroup.rotation.x = CLOSED_LID_ROTATION;
+    this.lidGroup.add(this.createBoxOutline(5.4, 3.25, 0.2, 'primary', [0, 1.62, -0.02]));
+    this.lidGroup.add(this.createRectangle(4.72, 2.45, 'text', [0, 1.62, 0.1]));
+    this.lidGroup.add(this.createEllipse(0.09, 0.09, 'surface', [0, 2.92, 0.11]));
+    this.lidGroup.add(this.createLine([[-1.75, 2.22, 0.12], [1.75, 2.22, 0.12]], 'surface'));
+    this.lidGroup.add(this.createLine([[-1.75, 1.88, 0.12], [1.75, 1.88, 0.12]], 'surface'));
+    this.lidGroup.add(this.createLine([[-1.75, 1.54, 0.12], [1.75, 1.54, 0.12]], 'surface'));
+    this.lidGroup.add(this.createLine([[-1.75, 1.2, 0.12], [1.75, 1.2, 0.12]], 'surface'));
+    this.lidGroup.add(this.createLine([[-2.45, 0, 0.02], [2.45, 0, 0.02]], 'primary'));
+    group.add(this.lidGroup);
 
     return group;
   }
@@ -196,17 +218,26 @@ export class PcOutlineScene implements AfterViewInit, OnChanges, OnDestroy {
     depth: number,
     materialName: MaterialName,
     position: VectorTuple,
-  ): LineSegments {
+  ): Group {
     const THREE = this.threeModule;
     const boxGeometry = new THREE.BoxGeometry(width, height, depth);
     const edgeGeometry = new THREE.EdgesGeometry(boxGeometry);
     boxGeometry.dispose();
-
-    const outline = new THREE.LineSegments(edgeGeometry, this.getMaterial(materialName));
-    outline.position.set(...position);
     this.geometries.push(edgeGeometry);
 
-    return outline;
+    const group = new THREE.Group();
+
+    for (const offset of this.boldOffsets) {
+      const outline = new THREE.LineSegments(edgeGeometry, this.getMaterial(materialName));
+      outline.position.set(
+        position[0] + offset[0],
+        position[1] + offset[1],
+        position[2] + offset[2],
+      );
+      group.add(outline);
+    }
+
+    return group;
   }
 
   private createRectangle(
@@ -214,7 +245,7 @@ export class PcOutlineScene implements AfterViewInit, OnChanges, OnDestroy {
     height: number,
     materialName: MaterialName,
     position: VectorTuple,
-  ): Line {
+  ): Group {
     const THREE = this.threeModule;
     const halfWidth = width / 2;
     const halfHeight = height / 2;
@@ -229,29 +260,35 @@ export class PcOutlineScene implements AfterViewInit, OnChanges, OnDestroy {
     return this.createLineFromPoints(points, materialName, position);
   }
 
+  private createHorizontalRectangle(
+    width: number,
+    depth: number,
+    materialName: MaterialName,
+    position: VectorTuple,
+  ): Group {
+    const THREE = this.threeModule;
+    const halfWidth = width / 2;
+    const halfDepth = depth / 2;
+    const points = [
+      new THREE.Vector3(-halfWidth, 0, -halfDepth),
+      new THREE.Vector3(halfWidth, 0, -halfDepth),
+      new THREE.Vector3(halfWidth, 0, halfDepth),
+      new THREE.Vector3(-halfWidth, 0, halfDepth),
+      new THREE.Vector3(-halfWidth, 0, -halfDepth),
+    ];
+
+    return this.createLineFromPoints(points, materialName, position);
+  }
+
   private createEllipse(
     radiusX: number,
     radiusY: number,
     materialName: MaterialName,
     position: VectorTuple,
-  ): Line {
+  ): Group {
     const THREE = this.threeModule;
     const points = this.createEllipsePoints(radiusX, radiusY).map(
       ([x, y]) => new THREE.Vector3(x, y, 0),
-    );
-
-    return this.createLineFromPoints(points, materialName, position);
-  }
-
-  private createFlatEllipse(
-    radiusX: number,
-    radiusZ: number,
-    materialName: MaterialName,
-    position: VectorTuple,
-  ): Line {
-    const THREE = this.threeModule;
-    const points = this.createEllipsePoints(radiusX, radiusZ).map(
-      ([x, z]) => new THREE.Vector3(x, 0, z),
     );
 
     return this.createLineFromPoints(points, materialName, position);
@@ -265,7 +302,7 @@ export class PcOutlineScene implements AfterViewInit, OnChanges, OnDestroy {
     });
   }
 
-  private createLine(points: [VectorTuple, VectorTuple], materialName: MaterialName): Line {
+  private createLine(points: [VectorTuple, VectorTuple], materialName: MaterialName): Group {
     const THREE = this.threeModule;
 
     return this.createLineFromPoints(
@@ -279,14 +316,24 @@ export class PcOutlineScene implements AfterViewInit, OnChanges, OnDestroy {
     points: Vector3[],
     materialName: MaterialName,
     position: VectorTuple,
-  ): Line {
+  ): Group {
     const THREE = this.threeModule;
     const geometry = new THREE.BufferGeometry().setFromPoints(points);
-    const line = new THREE.Line(geometry, this.getMaterial(materialName));
-    line.position.set(...position);
     this.geometries.push(geometry);
 
-    return line;
+    const group = new THREE.Group();
+
+    for (const offset of this.boldOffsets) {
+      const line = new THREE.Line(geometry, this.getMaterial(materialName));
+      line.position.set(
+        position[0] + offset[0],
+        position[1] + offset[1],
+        position[2] + offset[2],
+      );
+      group.add(line);
+    }
+
+    return group;
   }
 
   private getMaterial(materialName: MaterialName): LineBasicMaterial {
@@ -301,7 +348,11 @@ export class PcOutlineScene implements AfterViewInit, OnChanges, OnDestroy {
 
   private updateTargetRotation(): void {
     const progress = Math.max(0, this.scrollProgress);
-    this.targetRotationY = -0.18 + progress * (Math.PI / 2);
+    const openProgress = this.smoothstep(Math.min(progress, 1));
+    const rotationProgress = Math.max(progress - 1, 0);
+
+    this.targetLidRotationX = this.lerp(CLOSED_LID_ROTATION, OPEN_LID_ROTATION, openProgress);
+    this.targetRotationY = -0.18 + rotationProgress * (Math.PI / 2);
 
     if (this.reducedMotion) {
       this.applyRotation(1);
@@ -325,6 +376,14 @@ export class PcOutlineScene implements AfterViewInit, OnChanges, OnDestroy {
       this.targetRotationY,
       amount,
     );
+
+    if (this.lidGroup) {
+      this.lidGroup.rotation.x = this.threeModule.MathUtils.lerp(
+        this.lidGroup.rotation.x,
+        this.targetLidRotationX,
+        amount,
+      );
+    }
   }
 
   private resizeScene(): void {
@@ -349,9 +408,9 @@ export class PcOutlineScene implements AfterViewInit, OnChanges, OnDestroy {
     }
 
     const compact = width < 520;
-    this.camera.position.z = compact ? 12.2 : 9.8;
-    this.pcGroup.position.set(compact ? -0.2 : -0.15, compact ? 0.05 : 0.1, 0);
-    this.pcGroup.scale.setScalar(compact ? 0.78 : 0.86);
+    this.camera.position.z = compact ? 11.7 : 9.6;
+    this.pcGroup.position.set(compact ? -0.1 : -0.15, compact ? -0.08 : -0.05, 0);
+    this.pcGroup.scale.setScalar(compact ? 0.75 : 0.9);
   }
 
   private renderScene(): void {
@@ -391,6 +450,16 @@ export class PcOutlineScene implements AfterViewInit, OnChanges, OnDestroy {
     } catch {
       return fallback;
     }
+  }
+
+  private lerp(start: number, end: number, amount: number): number {
+    return start + (end - start) * amount;
+  }
+
+  private smoothstep(value: number): number {
+    const clamped = Math.min(Math.max(value, 0), 1);
+
+    return clamped * clamped * (3 - 2 * clamped);
   }
 
   private get threeModule(): ThreeModule {
