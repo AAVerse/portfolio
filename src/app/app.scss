@@ -11,7 +11,13 @@
 
 .app-shell__content {
   container-type: inline-size;
+  height: 100vh;
   min-height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+  overscroll-behavior-y: contain;
   margin-left: var(--navbar-expanded-width);
   transition: margin-left 280ms ease;
   width: calc(100vw - var(--navbar-expanded-width));
