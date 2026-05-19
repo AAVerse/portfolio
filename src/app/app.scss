@@ -4,9 +4,25 @@
 }
 
 .app-shell {
+  color-scheme: light;
   min-height: 100vh;
   background: var(--color-background);
   color: var(--color-text);
+  transition:
+    background-color 220ms ease,
+    color 220ms ease;
+}
+
+.app-shell--dark-theme {
+  --color-primary: #ff8ab7;
+  --color-background: #120c10;
+  --color-surface: #24161e;
+  --color-text: #f4dce6;
+  --color-navbar: #2b0f1d;
+  --color-navbar-text: #f9dbe8;
+  --color-navbar-accent: #ffadc9;
+
+  color-scheme: dark;
 }
 
 .app-shell__content {

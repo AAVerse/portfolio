@@ -24,4 +24,21 @@ describe('App', () => {
     expect(compiled.textContent).toContain('AAVerse');
     expect(compiled.textContent).toContain('Projects & Technologies');
   });
+
+  it('should toggle the dark theme from the navigation control', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+    const appShell = compiled.querySelector('.app-shell');
+    const themeToggle = compiled.querySelector<HTMLButtonElement>('.side-navbar__theme-toggle');
+
+    expect(appShell?.classList.contains('app-shell--dark-theme')).toBeFalse();
+    expect(themeToggle).toBeTruthy();
+
+    themeToggle?.click();
+    fixture.detectChanges();
+
+    expect(appShell?.classList.contains('app-shell--dark-theme')).toBeTrue();
+    expect(themeToggle?.getAttribute('aria-pressed')).toBe('true');
+  });
 });

@@ -21,8 +21,13 @@ import { SkillsSection } from './components/skills-section/skills-section';
 })
 export class App {
   protected readonly isNavbarCollapsed = signal(true);
+  protected readonly isDarkTheme = signal(false);
 
   protected setNavbarCollapsed(isCollapsed: boolean): void {
     this.isNavbarCollapsed.set(isCollapsed);
+  }
+
+  protected setDarkTheme(isDarkTheme: boolean): void {
+    this.isDarkTheme.set(isDarkTheme);
   }
 }

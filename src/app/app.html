@@ -1,7 +1,13 @@
-<div class="app-shell" [class.app-shell--navbar-collapsed]="isNavbarCollapsed()">
+<div
+  class="app-shell"
+  [class.app-shell--navbar-collapsed]="isNavbarCollapsed()"
+  [class.app-shell--dark-theme]="isDarkTheme()"
+>
   <app-navbar
     [collapsed]="isNavbarCollapsed()"
     (collapsedChange)="setNavbarCollapsed($event)"
+    [darkTheme]="isDarkTheme()"
+    (darkThemeChange)="setDarkTheme($event)"
   />
 
   <main class="app-shell__content" aria-label="Page content">

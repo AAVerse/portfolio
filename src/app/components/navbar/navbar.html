@@ -34,4 +34,28 @@
       </li>
     }
   </ul>
+
+  <div class="side-navbar__footer">
+    <button
+      class="side-navbar__link side-navbar__theme-toggle"
+      type="button"
+      (click)="toggleTheme()"
+      [attr.aria-label]="darkTheme ? 'Switch to light theme' : 'Switch to dark theme'"
+      [attr.aria-pressed]="darkTheme"
+      [attr.title]="darkTheme ? 'Switch to light theme' : 'Switch to dark theme'"
+    >
+      <span
+        class="side-navbar__theme-icon"
+        style="display: inline-block"
+        [style.transform]="darkTheme ? null : 'rotate(-18deg)'"
+        aria-hidden="true"
+      >
+        @if (darkTheme) {
+          &#9728;
+        } @else {
+          &#9790;
+        }
+      </span>
+    </button>
+  </div>
 </nav>

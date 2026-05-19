@@ -5,6 +5,9 @@
   --color-background: #f1e2d1;
   --color-surface: #dcc3aa;
   --color-text: #541a1a;
+  --color-navbar: var(--color-primary);
+  --color-navbar-text: var(--color-background);
+  --color-navbar-accent: var(--color-surface);
   --navbar-expanded-width: 380px;
   --navbar-collapsed-width: 64px;
 }
