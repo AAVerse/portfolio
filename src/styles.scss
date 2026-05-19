@@ -37,6 +37,7 @@ body {
   justify-items: start;
   padding: clamp(2rem, 6vw, 6rem);
   padding-right: clamp(18rem, 42vw, 38rem);
+  background: transparent;
   scroll-snap-align: start;
   scroll-snap-stop: always;
 }
@@ -77,11 +78,6 @@ body {
 .portfolio-section--projects-technologies {
   place-items: center;
   padding: clamp(2rem, 6vw, 6rem);
-}
-
-.portfolio-section--about,
-.portfolio-section--projects-technologies {
-  background: var(--color-surface);
 }
 
 @media (max-width: 900px) {

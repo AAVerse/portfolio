@@ -403,7 +403,11 @@ export class PcOutlineScene implements AfterViewInit, OnChanges, OnDestroy {
     const aboutProgress = this.smoothstep(Math.min(progress, 1));
     const skillsProgress = this.smoothstep(Math.min(Math.max(progress - 1, 0), 1));
     const projectsProgress = this.smoothstep(Math.min(Math.max(progress - 2, 0), 1));
-    const contactProgress = this.smoothstep(Math.min(Math.max(progress - 3, 0), 1));
+    const rawContactProgress = Math.min(Math.max(progress - 3, 0), 1);
+    const contactProgress = this.smoothstep(rawContactProgress);
+    const screenZoomProgress = this.smoothstep(Math.min(rawContactProgress / 0.68, 1));
+    const laptopFadeProgress = this.smoothstep((rawContactProgress - 0.46) / 0.34);
+    const contactRevealProgress = this.smoothstep((rawContactProgress - 0.3) / 0.5);
     const closeProgress = progress <= 1 ? aboutProgress : 1 - skillsProgress;
     const sectionScale = this.compactLayout ? 0.58 : 0.62;
     const introPosition: VectorTuple = this.compactLayout ? [0, -0.08, 0] : [2.18, -0.1, 0];
@@ -412,12 +416,14 @@ export class PcOutlineScene implements AfterViewInit, OnChanges, OnDestroy {
       ? [-0.72, -0.48, 0]
       : [-2.18, -0.1, 0];
     const projectsPosition: VectorTuple = this.compactLayout ? [0, -0.08, 0] : [0, -0.62, 0];
+    const screenCenterPosition: VectorTuple = this.compactLayout ? [0, -0.08, 0] : [0, -0.46, 0];
     const contactPhonePosition: VectorTuple = this.compactLayout
       ? [0, -0.08, 0]
       : [-2.12, -0.04, 0];
     const projectsScale = this.compactLayout ? 0.58 : 1.89;
+    const screenZoomScale = this.compactLayout ? 1.24 : 5.2;
     const contactPhoneScale = this.compactLayout ? 0.58 : 0.82;
-    const phoneStartScale = this.compactLayout ? 0.12 : 0.28;
+    const phoneStartScale = this.compactLayout ? 0.18 : 0.26;
     const skillsRotation = -0.18 + Math.PI / 2;
     const projectsRotation = 0;
 
@@ -430,8 +436,8 @@ export class PcOutlineScene implements AfterViewInit, OnChanges, OnDestroy {
     } else {
       this.targetPosition = this.interpolateVector(
         projectsPosition,
-        contactPhonePosition,
-        contactProgress,
+        screenCenterPosition,
+        screenZoomProgress,
       );
     }
 
@@ -440,7 +446,7 @@ export class PcOutlineScene implements AfterViewInit, OnChanges, OnDestroy {
     } else if (progress <= 3) {
       this.targetScale = this.lerp(sectionScale, projectsScale, projectsProgress);
     } else {
-      this.targetScale = this.lerp(projectsScale, 0.01, contactProgress);
+      this.targetScale = this.lerp(projectsScale, screenZoomScale, screenZoomProgress);
     }
 
     const sectionLidRotation = this.lerp(OPEN_LID_ROTATION, CLOSED_LID_ROTATION, closeProgress);
@@ -463,14 +469,14 @@ export class PcOutlineScene implements AfterViewInit, OnChanges, OnDestroy {
       this.targetRotationY = projectsRotation;
     }
 
-    this.targetLaptopOpacity = progress <= 3 ? 1 : 1 - contactProgress;
+    this.targetLaptopOpacity = progress <= 3 ? 1 : 1 - laptopFadeProgress;
     this.targetPhonePosition =
       progress <= 3
-        ? projectsPosition
-        : this.interpolateVector(projectsPosition, contactPhonePosition, contactProgress);
+        ? screenCenterPosition
+        : this.interpolateVector(screenCenterPosition, contactPhonePosition, contactProgress);
     this.targetPhoneScale =
       progress <= 3 ? 0.01 : this.lerp(phoneStartScale, contactPhoneScale, contactProgress);
-    this.targetPhoneOpacity = progress <= 3 ? 0 : contactProgress;
+    this.targetPhoneOpacity = progress <= 3 ? 0 : contactRevealProgress;
 
     if (this.reducedMotion) {
       this.applyRotation(1);

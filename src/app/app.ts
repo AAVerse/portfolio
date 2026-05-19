@@ -26,6 +26,15 @@ export class App {
   protected readonly isDarkTheme = signal(false);
   protected readonly sectionProgress = signal(0);
 
+  protected backgroundSurfaceOpacity(): string {
+    const progress = this.sectionProgress();
+    const sectionIndex = Math.floor(progress);
+    const sectionProgress = progress - sectionIndex;
+    const fadeProgress = this.smoothstep(sectionProgress);
+
+    return (sectionIndex % 2 === 0 ? fadeProgress : 1 - fadeProgress).toFixed(3);
+  }
+
   protected setNavbarCollapsed(isCollapsed: boolean): void {
     this.isNavbarCollapsed.set(isCollapsed);
   }
@@ -49,5 +58,11 @@ export class App {
     );
 
     this.sectionProgress.set(nextProgress);
+  }
+
+  private smoothstep(value: number): number {
+    const clamped = Math.min(Math.max(value, 0), 1);
+
+    return clamped * clamped * (3 - 2 * clamped);
   }
 }

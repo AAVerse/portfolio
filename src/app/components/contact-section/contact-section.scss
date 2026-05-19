@@ -13,7 +13,17 @@
   display: grid;
   grid-template-columns: minmax(14rem, 1fr) minmax(14rem, 1fr);
   align-items: center;
+  opacity: var(--contact-content-opacity, 1);
+  transform: translate3d(
+      var(--contact-content-x, 0),
+      var(--contact-content-y, 0),
+      0
+    )
+    scale(var(--contact-content-scale, 1));
+  transform-origin: center;
+  transition: opacity 120ms linear;
   width: min(100%, 68rem);
+  will-change: opacity, transform;
 }
 
 .contact-section__content::before {
@@ -31,6 +41,8 @@
 @media (max-width: 900px) {
   .contact-section__content {
     display: block;
+    opacity: 1;
+    transform: none;
     width: 100%;
   }
 

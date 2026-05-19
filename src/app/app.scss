@@ -5,15 +5,30 @@
 
 .app-shell {
   --active-navbar-width: var(--navbar-expanded-width);
+  --section-background-surface-opacity: 0;
 
   color-scheme: light;
   position: relative;
   min-height: 100vh;
-  background: var(--color-background);
+  background-color: var(--color-background);
   color: var(--color-text);
   transition:
     background-color 220ms ease,
     color 220ms ease;
+}
+
+.app-shell::before {
+  content: '';
+  position: fixed;
+  inset: 0 0 0 var(--active-navbar-width);
+  z-index: 0;
+  background-color: var(--color-surface);
+  opacity: var(--section-background-surface-opacity);
+  pointer-events: none;
+  transition:
+    background-color 220ms ease,
+    left 280ms ease,
+    opacity 120ms linear;
 }
 
 .app-shell--navbar-collapsed {
@@ -34,6 +49,7 @@
 
 .app-shell__content {
   container-type: inline-size;
+  position: relative;
   height: 100vh;
   min-height: 100vh;
   overflow-y: auto;
@@ -44,4 +60,12 @@
   margin-left: var(--active-navbar-width);
   transition: margin-left 280ms ease;
   width: calc(100vw - var(--active-navbar-width));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-shell,
+  .app-shell::before,
+  .app-shell__content {
+    transition: none;
+  }
 }

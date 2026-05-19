@@ -2,6 +2,7 @@
   class="app-shell"
   [class.app-shell--navbar-collapsed]="isNavbarCollapsed()"
   [class.app-shell--dark-theme]="isDarkTheme()"
+  [style.--section-background-surface-opacity]="backgroundSurfaceOpacity()"
 >
   <app-navbar
     [collapsed]="isNavbarCollapsed()"
@@ -21,6 +22,6 @@
     <app-about-section />
     <app-skills-section />
     <app-projects-technologies-section />
-    <app-contact-section />
+    <app-contact-section [scrollProgress]="sectionProgress()" />
   </main>
 </div>
