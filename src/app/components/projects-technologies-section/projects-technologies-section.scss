@@ -1,3 +1,72 @@
 :host {
   display: block;
 }
+
+.projects-technologies-section__screen {
+  display: grid;
+  width: min(58vw, 46rem);
+  max-height: min(42vh, 24rem);
+  gap: clamp(0.75rem, 2vh, 1.4rem);
+  align-content: center;
+  overflow: hidden;
+  padding: clamp(1rem, 3vw, 2rem);
+  color: var(--color-text);
+  text-align: center;
+}
+
+.projects-technologies-section__eyebrow {
+  color: var(--color-primary);
+  font-size: clamp(0.78rem, 1.4vw, 1rem);
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.projects-technologies-section__title {
+  z-index: 0;
+  max-width: none;
+  font-size: clamp(2.2rem, 5.8vw, 5rem);
+  line-height: 0.95;
+  text-align: center;
+}
+
+.projects-technologies-section__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.projects-technologies-section__item {
+  display: grid;
+  min-height: 5.5rem;
+  align-content: center;
+  gap: 0.3rem;
+  padding: 0.8rem;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 44%, transparent);
+  background: color-mix(in srgb, var(--color-background) 74%, transparent);
+}
+
+.projects-technologies-section__item span {
+  color: var(--color-primary);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.projects-technologies-section__item strong {
+  font-size: clamp(0.9rem, 1.4vw, 1.05rem);
+  line-height: 1.15;
+}
+
+@media (max-width: 900px) {
+  .projects-technologies-section__screen {
+    width: min(100%, 36rem);
+    max-height: none;
+    padding: 0;
+  }
+
+  .projects-technologies-section__grid {
+    grid-template-columns: 1fr;
+  }
+}

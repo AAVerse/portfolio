@@ -74,6 +74,11 @@ body {
   text-align: right;
 }
 
+.portfolio-section--projects-technologies {
+  place-items: center;
+  padding: clamp(2rem, 6vw, 6rem);
+}
+
 .portfolio-section--about,
 .portfolio-section--projects-technologies {
   background: var(--color-surface);

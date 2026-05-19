@@ -1,3 +1,42 @@
 :host {
   display: block;
 }
+
+.portfolio-section--contact {
+  place-items: center;
+  padding: clamp(2rem, 6vw, 6rem);
+}
+
+.contact-section__content {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: minmax(14rem, 1fr) minmax(14rem, 1fr);
+  align-items: center;
+  width: min(100%, 68rem);
+}
+
+.contact-section__content::before {
+  content: '';
+  display: block;
+  min-height: 1px;
+}
+
+.contact-section__content h1 {
+  grid-column: 2;
+  justify-self: start;
+  max-width: 8ch;
+}
+
+@media (max-width: 900px) {
+  .contact-section__content {
+    display: block;
+    width: 100%;
+  }
+
+  .contact-section__content h1 {
+    margin-inline: auto;
+    max-width: 100%;
+    text-align: center;
+  }
+}
